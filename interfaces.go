@@ -37,8 +37,9 @@ type ConfigBuilder[T any] interface {
 	// so that other options may apply their effects first if the intention is to use fields populated by other options.
 	WithFunc(fn func(configObj *T)) ConfigBuilder[T]
 
-	// WithJsonFile specifies a json file that should be loaded.
-	WithJsonFile(path string) ConfigBuilder[T]
+	// WithJsonFile specifies a json file that should be loaded. The second parameter specifies whether the file is optional.
+	// An optional file will not return error if it does not exist. By default, the file is required.
+	WithJsonFile(path string, optional ...bool) ConfigBuilder[T]
 
 	// WithJsonString specifies a serialized json string that should be loaded. This is useful in cases where for instance
 	// the config is embedded at build time, or any other scenario where the configuration is provided as anything other

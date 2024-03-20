@@ -3,6 +3,7 @@ package options
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"os"
 	"text/template"
 )
@@ -14,6 +15,7 @@ const (
 
 type WithEnvJsonFile[T any] struct {
 	FilePathTemplate string
+	Required         bool
 }
 
 func (opt *WithEnvJsonFile[T]) Apply(options *ConfigBuilderOptions[T]) error {
@@ -44,6 +46,9 @@ func (opt *WithEnvJsonFile[T]) Apply(options *ConfigBuilderOptions[T]) error {
 
 	err = readJsonFile(filePath.String(), &cfg)
 	if err != nil {
+		if errors.Is(err, os.ErrNotExist) && !opt.Required {
+			return nil
+		}
 		return err
 	}
 
@@ -54,6 +59,7 @@ func (opt *WithEnvJsonFile[T]) Apply(options *ConfigBuilderOptions[T]) error {
 
 type WithJsonFile[T any] struct {
 	FilePath string
+	Required bool
 }
 
 func (opt WithJsonFile[T]) Apply(options *ConfigBuilderOptions[T]) error {
@@ -68,6 +74,9 @@ func (opt WithJsonFile[T]) Apply(options *ConfigBuilderOptions[T]) error {
 
 	err := readJsonFile(filePath, &cfg)
 	if err != nil {
+		if errors.Is(err, os.ErrNotExist) && !opt.Required {
+			return nil
+		}
 		return err
 	}
 

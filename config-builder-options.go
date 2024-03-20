@@ -7,7 +7,7 @@ import (
 func (builder *configBuilder[T]) WithDefaultConfigFiles() ConfigBuilder[T] {
 	builder.options = append(
 		builder.options,
-		&options.WithJsonFile[T]{},
+		&options.WithJsonFile[T]{Required: true},
 		&options.WithEnvJsonFile[T]{},
 	)
 	return builder
@@ -63,8 +63,12 @@ func (builder *configBuilder[T]) WithFunc(fn func(configObj *T)) ConfigBuilder[T
 	return builder
 }
 
-func (builder *configBuilder[T]) WithJsonFile(path string) ConfigBuilder[T] {
-	builder.options = append(builder.options, &options.WithJsonFile[T]{FilePath: path})
+func (builder *configBuilder[T]) WithJsonFile(path string, optional ...bool) ConfigBuilder[T] {
+	var isOptional bool
+	if len(optional) > 0 {
+		isOptional = optional[0]
+	}
+	builder.options = append(builder.options, &options.WithJsonFile[T]{FilePath: path, Required: !isOptional})
 	return builder
 }
 
