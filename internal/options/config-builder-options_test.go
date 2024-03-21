@@ -6,13 +6,15 @@ import (
 )
 
 type MyConfig struct {
-	Foo    string
-	Bar    string
-	Nested *MyNestedConfig
+	Foo         string
+	Bar         string
+	Nested      *MyNestedConfig
+	OtherNested MyNestedConfig
 }
 
 type MyNestedConfig struct {
-	SomeInt int
+	SomeInt        int
+	SomeOtherValue string
 }
 
 func TestConfigBuilderOptions_Merge(t *testing.T) {
@@ -21,7 +23,7 @@ func TestConfigBuilderOptions_Merge(t *testing.T) {
 		name           string
 		configA        MyConfig
 		configB        MyConfig
-		expectedResult MyConfig
+		expectedResult *MyConfig
 	}{
 		{
 			name: "ShouldMergeTopLevelField",
@@ -31,7 +33,7 @@ func TestConfigBuilderOptions_Merge(t *testing.T) {
 			configB: MyConfig{
 				Bar: "world",
 			},
-			expectedResult: MyConfig{
+			expectedResult: &MyConfig{
 				Foo: "hello",
 				Bar: "world",
 			},
@@ -39,22 +41,28 @@ func TestConfigBuilderOptions_Merge(t *testing.T) {
 		{
 			name: "ShouldMergeNestedStruct",
 			configA: MyConfig{
-				Foo: "hello",
-				Bar: "world",
+				Foo:         "hello",
+				Bar:         "world",
+				Nested:      &MyNestedConfig{SomeOtherValue: "foobar"},
+				OtherNested: MyNestedConfig{SomeInt: 6},
 			},
 			configB: MyConfig{
 				Nested: &MyNestedConfig{SomeInt: 1},
 			},
-			expectedResult: MyConfig{
-				Foo:    "hello",
-				Bar:    "world",
-				Nested: &MyNestedConfig{SomeInt: 1},
+			expectedResult: &MyConfig{
+				Foo:         "hello",
+				Bar:         "world",
+				Nested:      &MyNestedConfig{SomeInt: 1, SomeOtherValue: "foobar"},
+				OtherNested: MyNestedConfig{SomeInt: 6},
 			},
 		},
 	}
 
 	for _, tt := range tests {
-		opts := &ConfigBuilderOptions[MyConfig]{}
+		var cfg MyConfig
+		opts := &ConfigBuilderOptions[MyConfig]{
+			Config: &cfg,
+		}
 		t.Run(tt.name, func(st *testing.T) {
 
 			opts.Merge(&tt.configA)
