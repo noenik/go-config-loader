@@ -2,12 +2,13 @@ package configbuilder
 
 import (
 	"errors"
+	"github.com/noenik/go-config-loader/interfaces"
 	"github.com/noenik/go-config-loader/internal/options"
 	"os"
 	"reflect"
 )
 
-func NewConfigBuilder[T any]() ConfigBuilder[T] {
+func NewConfigBuilder[T any]() interfaces.ConfigBuilder[T] {
 	return &configBuilder[T]{}
 }
 
