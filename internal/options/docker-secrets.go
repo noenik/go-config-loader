@@ -41,6 +41,7 @@ func (opt *WithDockerSecrets[T]) Apply(options *ConfigBuilderOptions[T]) error {
 		}
 	}
 
+	options.secrets = secrets
 	utils.FindAndApplyValuesByTag(secrets, reflect.ValueOf(options.Config).Elem(), "secret", 1)
 
 	return nil

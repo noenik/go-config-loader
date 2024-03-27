@@ -12,6 +12,8 @@ type ConfigBuilderOptions[T any] struct {
 	Config      *T
 	Environment string
 	VersionFile string
+
+	secrets map[string]string
 }
 
 func (c *ConfigBuilderOptions[T]) Merge(cfg *T) {
@@ -19,6 +21,10 @@ func (c *ConfigBuilderOptions[T]) Merge(cfg *T) {
 		c.Config,
 		cfg,
 	)
+}
+
+func (c *ConfigBuilderOptions[T]) Secrets() map[string]string {
+	return c.secrets
 }
 
 func mergeValues(dst any, src any) {

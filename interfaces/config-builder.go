@@ -1,4 +1,4 @@
-package configbuilder
+package interfaces
 
 type ConfigBuilder[T any] interface {
 	Build(cfgObj *T) error
@@ -35,7 +35,7 @@ type ConfigBuilder[T any] interface {
 
 	// WithFunc specifies a function to apply to the configuration. Please note that this option should be added at the end
 	// so that other options may apply their effects first if the intention is to use fields populated by other options.
-	WithFunc(fn func(configObj *T)) ConfigBuilder[T]
+	WithFunc(fn func(configObj *T, c ContextAccessor)) ConfigBuilder[T]
 
 	// WithJsonFile specifies a json file that should be loaded. The second parameter specifies whether the file is optional.
 	// An optional file will not return error if it does not exist. By default, the file is required.
